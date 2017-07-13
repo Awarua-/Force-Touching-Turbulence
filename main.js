@@ -28,7 +28,7 @@ let messageHandler = (message) => {
 
     clean = () => {
         return new Promise((resolve, reject) => {
-            server.close(() => socket.destructor().then(() => logger.destructor()).then(resolve).catch(err => reject(err)));
+            server.close(() => scale.destructor().then(socket.destructor().then(() => logger.destructor())).then(resolve).catch(err => reject(err)));
         });
     };
 
@@ -41,7 +41,9 @@ const express = require('express'),
     Logger = require('./logger.js'),
     logger = new Logger(),
     WSSocket = require('./websocket.js'),
-    socket = new WSSocket(messageHandler.bind(this));
+    socket = new WSSocket(messageHandler.bind(this)),
+    Scale = require('./scale.js'),
+    scale = new Scale(socket.send.bind(socket))
 
 app.use(express.static('wwwroot'));
 
